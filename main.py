@@ -4,10 +4,10 @@ import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
 
-dt = 2e-4
-crds = (0.2, 0.2, 0.5)
-S = "1e5 * exp(-((x-x0)**2 + (y-y0)**2 + (z-z0)**2)/(2*0.02**2)) * exp(-(t-0.003)**2/(2*0.0008**2))"
-Solver = SolverHypEqTherm(80, 300, 3e-3, 8e-4, crds, S, dt)
+dt = 1e-4 / 2
+crds = (0.5, 0.5, 0.5)
+S = "1e5 * exp(-((x-x0)**2 + (y-y0)**2 + (z-z0)**2)/(2*0.2**2)) * exp(-(t-0.003)**2/(2*0.0008**2))"
+Solver = SolverHypEqTherm(80, 200, 1e-4, 1000e-4, crds, S, dt)
 
 
 class DrawCubeSections():
@@ -61,8 +61,8 @@ class DrawCubeSections():
         self.im1.set_array(Tz)
         self.im2.set_array(Ty)
 
-        self.im1.set_clim(200, 600)
-        self.im2.set_clim(200, 600)
+        self.im1.set_clim(0, 460)
+        self.im2.set_clim(0, 600)
 
         return self.im1, self.im2
 

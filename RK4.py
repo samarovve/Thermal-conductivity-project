@@ -1,30 +1,36 @@
-# Алгоритм численного интегрирования RK4 для произвольного количества переменных и функций
-def RK4(vars, funcs, h):
+from typing import List, Callable
 
+
+def RK4(vars: List[float], funcs: List[Callable[..., float]], h: float) -> List[float]:
+
+    """
+    One step of the 4th-order Runge-Kutta method.
+
+
+    Args:
+        vars (List[float]): current values of variables
+        funcs (List[Callable[..., float]]): list of system functions
+        h (float): the integration step
+
+    Returns:
+        new variable values
+    """
 
     if len(vars) != len(funcs):
-        raise ValueError("Количество переменных должно быть равно количеству функций!")
+        raise ValueError("The number of variables must be equal to the number of functions!")
 
-    # список для хранения промежуточный значений переменных
-    temp_vars = []
+    k1 = [f(*vars) for f in funcs]
 
-    # K1
-    lst_k1 = [funcs[i](*vars) for i in range(len(funcs))]
+    temp = [vars[i] + 0.5 * h * k1[i] for i in range(len(vars))]
+    k2 = [f(*temp) for f in funcs]
 
-    # K2
-    temp_vars = [vars[i] + 0.5 * h * lst_k1[i] for i in range(len(vars))]
-    lst_k2 = [funcs[i](*temp_vars) for i in range(len(funcs))]
+    temp = [vars[i] + 0.5 * h * k2[i] for i in range(len(vars))]
+    k3 = [f(*temp) for f in funcs]
 
-    # K3
-    temp_vars = [vars[i] + 0.5 * h * lst_k2[i] for i in range(len(vars))]
-    lst_k3 = [funcs[i](*temp_vars) for i in range(len(funcs))]
+    temp = [vars[i] + h * k3[i] for i in range(len(vars))]
+    k4 = [f(*temp) for f in funcs]
 
-    # K4
-    temp_vars = [vars[i] + h * lst_k3[i] for i in range(len(vars))]
-    lst_k4 = [funcs[i](*temp_vars) for i in range(len(funcs))]
-
-    # Новое значение переменных
-    new_vars = [vars[i] + h * (lst_k1[i] + 2 * lst_k2[i] + lst_k3[i] * 2 + lst_k4[i]) / 6 for i in range(len(vars))]
-
-    # Возвращаем новое значение переменных
-    return new_vars
+    return [
+        vars[i] + h * (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i]) / 6
+        for i in range(len(vars))
+    ]
