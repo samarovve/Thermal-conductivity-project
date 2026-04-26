@@ -33,7 +33,7 @@ class SuperCubeStatic:
             ValueError: Если size < 3.
         """
         if size < 3:
-            raise ValueError('size must > 3')
+            raise ValueError('size must >= 3')
 
         self.size = size
         self.data_float = np.zeros(
