@@ -74,9 +74,9 @@ class SuperCubeStatic:
             data: List[float] = []
             rows: List[int] = [0]
             columns: List[int] = []
-            for x in range(1, self.size - 1):
+            for z in range(1, self.size - 1):
                 for y in range(1, self.size - 1):
-                    for z in range(1, self.size - 1):
+                    for x in range(1, self.size - 1):
                         members = 0
                         if z > 1:
                             data.append(-1.0)
