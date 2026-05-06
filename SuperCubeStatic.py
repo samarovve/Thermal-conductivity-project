@@ -241,12 +241,37 @@ class SuperCubeStatic:
                         self.data_float[x, y, z] = sols[i]
                         i += 1
 
+    def get_temp_from_cords(self, x: float, y: float, z: float, length: float) -> float:
+        """
+           Получает температуру точки по заданным координатам.
+           Если точка принадлежит нескольким кубам (на границе), возвращается среднее их температур.
 
+           Args:
+               x: Координата X.
+               y: Координата Y.
+               z: Координата Z.
+               length: Длина ребра куба.
 
+           Returns:
+               Средняя температура в точке.
 
-
-
-
-
-
-
+           Raises:
+               ValueError: Если координаты вне куба или длина <= 0.
+           """
+        if length<=0:
+            raise ValueError('length must be positive')
+        list_of_cubes = []
+        cell_size = length / self.size
+        if x < 0 or y < 0 or z < 0 or x > length or y > length or z > length:
+            raise ValueError('Coordinates out of range')
+        for ix in range(self.size):
+            for iy in range(self.size):
+                for iz in range(self.size):
+                    if (x >= ix * cell_size and
+                            y >= iy * cell_size and
+                            z >= iz * cell_size and
+                            x <= (ix + 1) * cell_size and
+                            y <= (iy + 1) * cell_size and
+                            z <= (iz + 1) * cell_size):
+                        list_of_cubes.append(self.get_temp_from_number(ix, iy, iz))
+        return sum(list_of_cubes) / len(list_of_cubes)
