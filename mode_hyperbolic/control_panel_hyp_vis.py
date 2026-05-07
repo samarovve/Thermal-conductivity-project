@@ -5,9 +5,12 @@ from qtpy.QtWidgets import (
 )
 from mode_hyperbolic.solver_hyp_eq_therm import SolverHypEqTherm
 from mode_hyperbolic.hyperbolic_visualizer import HyperbolicHeatVisualizer
-from state_values import should_continue, mode
 from typing import Optional
 import napari
+import json
+from pathlib import Path
+
+STATE_FILE = Path(__file__).parent / 'state.json'
 
 
 class ControlPanelHypVis(QWidget):
@@ -33,8 +36,6 @@ class ControlPanelHypVis(QWidget):
             viewer (napari.Viewer): The Napari viewer instance where the
                 simulation will be displayed.
         """
-
-        should_continue = False
 
         super().__init__()
         self.viewer = viewer
@@ -90,15 +91,15 @@ class ControlPanelHypVis(QWidget):
         self.stop_btn = QPushButton("Stop")
         self.back_btn = QPushButton("Back")
 
-        self.back_btn.setEnabled(False)
         self.stop_btn.setEnabled(False)
 
         self.start_btn.clicked.connect(self.on_start)
         self.stop_btn.clicked.connect(self.on_stop)
-        self.back_btn.clicked.connect(self.on_back)
+        self.back_btn.clicked.connect(self.back_to_menu)
 
         btn_layout.addWidget(self.start_btn)
         btn_layout.addWidget(self.stop_btn)
+        btn_layout.addWidget(self.back_btn)
         layout.addLayout(btn_layout)
 
     def _read_parameters(self) -> dict | None:
@@ -120,6 +121,7 @@ class ControlPanelHypVis(QWidget):
             z0 = float(self.z0_edit.text())
             dt = float(eval(self.dt_edit.text()))
             S = self.S_edit.text()
+
         except Exception as e:
             QMessageBox.critical(self, "Parameter Error", f"Invalid parameter:\n{e}")
             return None
@@ -179,16 +181,21 @@ class ControlPanelHypVis(QWidget):
         self.start_btn.setEnabled(True)
         self.stop_btn.setEnabled(False)
 
-    def bact_to_menu(self) -> None:
+    def back_to_menu(self) -> None:
+        """Stop any running simulation, write the state file to request the
+        launcher to return to the main menu, and then terminate the current
+        process.
+        """
 
         if self.visualizer is not None:
             self.visualizer.stop()
             self.visualizer = None
 
+        state = {'mode': 0, 'should_continue': True}
+        with open(STATE_FILE, 'w', encoding='utf-8') as f:
+            json.dump(state, f)
+
         self.viewer.window.close()
-        app = QApplication.instance().quit()
+        app = QApplication.instance()
         if app is not None:
             app.quit()
-
-        mode = 0
-        should_continue = True

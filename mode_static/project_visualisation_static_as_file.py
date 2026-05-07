@@ -1,13 +1,15 @@
 from ursina import *
 from SuperCubeStatic import SuperCubeStatic
 from typing import Optional, List
-from state_values import should_continue, mode
 
 menu_panel: Optional[Panel] = None
 menu_elements: List[Entity] = []
 menu_field: Optional[InputField] = None
 
-should_continue.value = False
+import json
+from pathlib import Path
+
+STATE_FILE = Path(__file__).parent / 'state.json'
 
 def temp_to_color(temp: float, min_temp: float = -200.0, max_temp: float = 1000.0) -> color:
     """
@@ -396,10 +398,10 @@ Button(
 )
 
 def close_app_static() -> None:
-    """"Закрывает приложение и переводит в режим меню"""
-    global should_continue, mode
-    should_continue.value = True
-    mode.value = 0
+    """Закрывает приложение и возвращает в главное меню."""
+    state = {'mode': 0, 'should_continue': True}
+    with open(STATE_FILE, 'w', encoding='utf-8') as f:
+        json.dump(state, f)
     application.quit()
 
 Button(
@@ -409,6 +411,22 @@ Button(
     z=2,
     on_click=lambda: close_app_static()
 )
+
+def on_window_close() -> None:
+    """Обрабатывает закрытие окна приложения (например, по нажатию на крестик).
+
+    Записывает в файл состояния ``state.json`` значения ``mode=0`` и
+    ``should_continue=False``, сигнализируя лаунчеру о необходимости
+    полного завершения программы при следующей проверке цикла.
+    После записи немедленно завершает текущее приложение Ursina.
+    """
+
+    state = {'mode': 0, 'should_continue': False}
+    with open(STATE_FILE, 'w', encoding='utf-8') as f:
+        json.dump(state, f)
+    application.quit()
+
+window.on_close = on_window_close
 
 
 app.run()

@@ -1,14 +1,15 @@
 """
 Меню выбора режима визуализации.
-Запускается лаунчером, устанавливает режим через глобальные переменные state_values.
+Запускается лаунчером, устанавливает режим через JSON-файл state.json.
 """
 
 from ursina import *
-from SuperCubeStatic import SuperCubeStatic
-from state_values import should_continue, mode
+from mode_static.SuperCubeStatic import SuperCubeStatic
+from typing import List
+import json
+from pathlib import Path
 
-# Глобальная установка для обработки закрытия крестиком (см. проектную логику)
-should_continue.value = False
+STATE_FILE = Path(__file__).parent / 'state.json'
 
 
 def temp_to_color(temp: float, min_temp: float = -200.0, max_temp: float = 1000.0) -> color:
@@ -134,6 +135,14 @@ class Visualisation:
         self.create_cube()
 
 
+def set_state_and_quit(mode_value: int) -> None:
+    """Записывает выбранный режим в файл и закрывает меню."""
+    state = {'mode': mode_value, 'should_continue': True}
+    with open(STATE_FILE, 'w', encoding='utf-8') as f:
+        json.dump(state, f)
+    application.quit()
+
+
 # === Запуск меню ===
 app = Ursina()
 window.title = 'Визуализация дискретного уравнения теплопроводности'
@@ -157,33 +166,25 @@ Text(
     z=-1,
 )
 
-
-def go_to_static() -> None:
-    """Переключает лаунчер в режим статической визуализации."""
-    should_continue.value = True
-    mode.value = 1
-    application.quit()
-
-
-def go_to_dynamic() -> None:
-    """Переключает лаунчер в режим динамической визуализации."""
-    should_continue.value = True
-    mode.value = 2
-    application.quit()
-
-
 Button(
     text='Режим 1: статический',
     scale=(0.4, 0.07),
     position=(-0.5, -0.4),
-    on_click=go_to_static,
+    on_click=lambda: set_state_and_quit(1),
 )
 
 Button(
     text='Режим 2: динамический',
     scale=(0.4, 0.07),
     position=(0.5, -0.4),
-    on_click=go_to_dynamic,
+    on_click=lambda: set_state_and_quit(2),
+)
+
+Button(
+    text='Режим 3: Hyperbolic',
+    scale=(0.4, 0.07),
+    position=(0.0, -0.55),
+    on_click=lambda: set_state_and_quit(3),
 )
 
 app.run()

@@ -1,11 +1,8 @@
-import pytest
 import numpy as np
-from solver_hyp_eq_therm import SolverHypEqTherm
+from mode_hyperbolic.solver_hyp_eq_therm import SolverHypEqTherm
 
 
-# ─────────────────────────────────────────────────────────────────────────────
 # 1. Тесты пространственной дискретизации (Лапласиан)
-# ─────────────────────────────────────────────────────────────────────────────
 class TestLaplacian:
     def test_constant_field_gives_zero(self):
         """Лапласиан константного поля должен быть строго 0."""
@@ -34,9 +31,7 @@ class TestLaplacian:
         assert err < 1.5e-2, f"Max Laplacian error {err:.4e} exceeds expected O(h²)"
 
 
-# ─────────────────────────────────────────────────────────────────────────────
 # 2. Тесты физических законов и сохранения
-# ─────────────────────────────────────────────────────────────────────────────
 class TestPhysics:
     def test_zero_source_no_evolution(self):
         """При S=0 и нулевой начальной скорости ∂T/∂t поле должно оставаться постоянным."""
@@ -84,9 +79,7 @@ class TestPhysics:
         np.testing.assert_allclose(T, T[:, :, ::-1], atol=1e-10)
 
 
-# ─────────────────────────────────────────────────────────────────────────────
 # 3. Тесты интегратора и состояния
-# ─────────────────────────────────────────────────────────────────────────────
 class TestIntegration:
     def test_time_advancement_and_state_update(self):
         """Проверка, что время корректно шагает, а массивы заменяются, а не модифицируются."""

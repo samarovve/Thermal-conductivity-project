@@ -1,5 +1,5 @@
 import numpy as np
-from RK4 import RK4
+from .RK4 import RK4
 import sympy as sp
 
 
