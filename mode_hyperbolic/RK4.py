@@ -1,7 +1,7 @@
-from typing import List, Callable
+from typing import List, Callable, Any
 
 
-def RK4(vars: List[float], funcs: List[Callable[..., float]], h: float) -> List[float]:
+def RK4(vars: List[Any], funcs: List[Callable[..., Any]], h: float) -> List[Any]:
 
     """
     One step of the 4th-order Runge-Kutta method.

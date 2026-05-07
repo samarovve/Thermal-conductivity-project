@@ -1,7 +1,6 @@
-from typing import Any
+from typing import Any, Optional
 import napari
 from qtpy import QtCore
-
 
 class HyperbolicHeatVisualizer:
     """
@@ -12,7 +11,7 @@ class HyperbolicHeatVisualizer:
     driven by a Qt timer.
     """
 
-    def __init__(self, solver: Any) -> None:
+    def __init__(self, solver: Any, viewer: Optional[napari.Viewer] = None) -> None:
         """
         Initialize the visualizer.
 
@@ -22,24 +21,35 @@ class HyperbolicHeatVisualizer:
                 - arr_T : 3D numpy array (temperature field)
                 - state : tuple/list where state[2] is time
                 - next_step_integration() method
+            viewer : napari.Viewer or None
+                Existing viewer to attach to (if None, a new one is created).
         """
         self.solver: Any = solver
+        self._own_viewer = viewer is None
 
-        self.viewer: napari.Viewer = napari.Viewer(
-            title="Hyperbolic Heat Conduction",
-            ndisplay=3
-        )
+        if self._own_viewer:
+            self.viewer = napari.Viewer(
+                title="Hyperbolic Heat Conduction",
+                ndisplay=3
+            )
+        else:
+            self.viewer = viewer
+
+        # Удаляем старый слой с таким же именем, если он уже есть
+        for layer in list(self.viewer.layers):
+            if layer.name == "Temperature":
+                self.viewer.layers.remove(layer)
 
         self.layer = self.viewer.add_image(
             solver.arr_T,
             name="Temperature",
             colormap="hot",
             rendering="translucent",
-            opacity=0.2
+            opacity=0.6
         )
 
         self.step: int = 0
-        self.timer: QtCore.QTimer | None = None
+        self.timer: Optional[QtCore.QTimer] = None
 
     def update(self) -> None:
         """
@@ -59,12 +69,24 @@ class HyperbolicHeatVisualizer:
 
         self.step += 1
 
-    def start(self) -> None:
+    def start(self, interval_ms: int = 10) -> None:
         """
-        Start the simulation loop using a Qt timer and launch Napari.
+        Start the simulation loop using a Qt timer.
+        If the viewer was created internally, also launches napari.run().
         """
+        if self.timer is not None:
+            self.stop()
+
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.update)
-        self.timer.start(10)
+        self.timer.start(interval_ms)
 
-        napari.run()
+        if self._own_viewer:
+            napari.run()
+
+    def stop(self) -> None:
+        """Stop the simulation timer without closing the viewer."""
+        if self.timer is not None:
+            self.timer.stop()
+            self.timer.deleteLater()
+            self.timer = None

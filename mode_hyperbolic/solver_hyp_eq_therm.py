@@ -109,7 +109,7 @@ class SolverHypEqTherm:
 
 
     def dT_dt(self, T: np.ndarray, V: np.ndarray, t: float) -> np.ndarray:
-        """Сompute the partial derivative of T with respect to t.
+        """Compute the partial derivative of T with respect to t.
 
         Returns:
             dT/dt = V (np.ndarray).
