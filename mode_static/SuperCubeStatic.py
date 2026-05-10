@@ -151,7 +151,7 @@ class SuperCubeStatic:
             IndexError: Если координаты выходят за границы куба.
         """
         try:
-            return self.data_float[x, y, z]
+            return float(self.data_float[x, y, z])
         except IndexError:
             raise IndexError('index out of range')
 
