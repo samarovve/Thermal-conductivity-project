@@ -1,5 +1,5 @@
 import napari
-from control_panel_hyp_vis import ControlPanelHypVis
+from mode_hyperbolic.control_panel_hyp_vis import ControlPanelHypVis
 
 def start() -> None:
     """Launch the hyperbolic heat conduction simulation in a dedicated Napari viewer."""

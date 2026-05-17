@@ -1,5 +1,5 @@
 import numpy as np
-from .RK4 import RK4
+from mode_hyperbolic.RK4 import RK4
 import sympy as sp
 
 

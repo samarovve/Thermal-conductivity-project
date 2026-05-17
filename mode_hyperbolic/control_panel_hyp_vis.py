@@ -45,7 +45,6 @@ class ControlPanelHypVis(QWidget):
 
         layout = QVBoxLayout(self)
 
-        # --- Parameter input fields ---
         form = QFormLayout()
 
         self.S_edit = QLineEdit(
