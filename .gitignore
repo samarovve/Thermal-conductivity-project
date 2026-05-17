@@ -4,3 +4,4 @@ __pycache__/
 .env
 state.json
 .venv/
+mypy.ini
