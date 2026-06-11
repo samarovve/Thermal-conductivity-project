@@ -4,7 +4,7 @@ from scipy.sparse import csr_matrix
 from scipy.sparse.linalg import spsolve
 from typing import List
 from itertools import product
-
+from pathlib import Path
 
 class SuperCubeStatic:
     """
@@ -180,6 +180,8 @@ class SuperCubeStatic:
 
         Для size < 7 используется символьное решение с подстановкой значений.
         Для size >= 7 используется численное решение СЛУ с помощью разреженной матрицы.
+
+        Сохраняет температуры в файл temperature_static_data.txt.
         """
         if self.size < 7:
             fast_solver = sp.lambdify(
@@ -227,6 +229,11 @@ class SuperCubeStatic:
             for x, y, z in product(range(1, self.size - 1), repeat=3):
                 self.data_float[x, y, z] = sols[i]
                 i += 1
+
+        save_path = Path(__file__).parent / "temperature_static_data.txt"
+        with open(save_path, 'w', encoding='utf-8') as f:
+            for x, y, z in product(range(self.size), repeat=3):
+                f.write(f"{x} {y} {z} {self.data_float[x, y, z]}\n")
 
     def get_temp_from_cords(
             self, x: float, y: float, z: float, length: float
