@@ -5,3 +5,4 @@ __pycache__/
 state.json
 .venv/
 mypy.ini
+temperature_static_data.txt
