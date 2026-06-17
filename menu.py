@@ -174,17 +174,17 @@ Button(
 )
 
 Button(
-    text='Режим 2: динамический',
+    text='Режим 2: Фурье',
     scale=(0.4, 0.07),
-    position=(0.5, -0.4),
-    on_click=lambda: set_state_and_quit(2),
+    position=(0.0, -0.4),
+    on_click=lambda: set_state_and_quit(3),
 )
 
 Button(
-    text='Режим 3: Hyperbolic',
+    text='Режим 3: гиперболический',
     scale=(0.4, 0.07),
-    position=(0.0, -0.55),
-    on_click=lambda: set_state_and_quit(3),
+    position=(0.5, -0.4),
+    on_click=lambda: set_state_and_quit(2),
 )
 
 app.run()
