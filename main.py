@@ -56,9 +56,7 @@ def main() -> None:
         elif mode_val == 1:
             run_script(str(BASE_DIR / 'mode_static' / 'project_visualisation_static_as_file.py'))
         elif mode_val == 2:
-            run_script(str(BASE_DIR / 'mode_hyperbolic' / 'project_visualisation_dynamic_as_file.py'))
-        elif mode_val == 3:
-            run_script(str(BASE_DIR / 'vpv' / 'start.py'))
+            run_script(str(BASE_DIR / 'run_hyperbolic.py'))
         else:
             continue
 

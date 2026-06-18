@@ -35,7 +35,6 @@ class HyperbolicHeatVisualizer:
         else:
             self.viewer = viewer
 
-        # Удаляем старый слой с таким же именем, если он уже есть
         for layer in list(self.viewer.layers):
             if layer.name == "Temperature":
                 self.viewer.layers.remove(layer)

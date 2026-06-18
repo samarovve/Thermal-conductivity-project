@@ -3,6 +3,8 @@ from qtpy.QtWidgets import (
     QLineEdit, QPushButton, QSpinBox, QDoubleSpinBox,
     QHBoxLayout, QLabel, QMessageBox
 )
+from sympy import false
+
 from mode_hyperbolic.solver_hyp_eq_therm import SolverHypEqTherm
 from mode_hyperbolic.hyperbolic_visualizer import HyperbolicHeatVisualizer
 from typing import Optional
