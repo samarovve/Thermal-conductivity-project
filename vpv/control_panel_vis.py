@@ -22,17 +22,22 @@ class ControlPanelFourierVis(QWidget):
         layout = QVBoxLayout(self)
         form = QFormLayout()
 
-        self.h_edit = QLineEdit("0.5")
+        self.h_edit = QLineEdit("1")
         form.addRow("h (cooling):", self.h_edit)
 
         self.P_edit = QLineEdit("50")
         form.addRow("P (Watt):", self.P_edit)
 
-        self.a_edit = QLineEdit("1e-5")
+        self.a_edit = QLineEdit("1.3e-7")
         form.addRow("a (diffusivity):", self.a_edit)
 
         self.T_air_edit = QLineEdit("25")
         form.addRow("T_air (°C):", self.T_air_edit)
+
+        self.L_edit = QLineEdit("0.045")
+        form.addRow("L (cube size, m):", self.L_edit)
+
+        self.rho_cp = 3.5e6
 
         self.N_spin = QSpinBox()
         self.N_spin.setRange(10, 150)
@@ -70,6 +75,7 @@ class ControlPanelFourierVis(QWidget):
             P = float(self.P_edit.text())
             a = float(self.a_edit.text())
             T_air = float(self.T_air_edit.text())
+            L = float(self.L_edit.text())
             N = self.N_spin.value()
             T0 = self.T0_spin.value()
             dt = float(eval(self.dt_edit.text()))
@@ -77,11 +83,13 @@ class ControlPanelFourierVis(QWidget):
             QMessageBox.critical(self, "Parameter Error", f"Invalid parameter:\n{e}")
             return None
 
-        if a <= 0 or dt <= 0 or P < 0:
-            QMessageBox.critical(self, "Parameter Error", "a, dt must be > 0, P >= 0")
+        if a <= 0 or dt <= 0 or P < 0 or L <= 0:
+            QMessageBox.critical(self, "Parameter Error",
+                                 "a, dt, L, P >= 0")
             return None
 
-        return {"N": N, "T0": T0, "a": a, "h": h, "P": P, "T_air": T_air, "dt": dt}
+        return {"N": N, "T0": T0, "a": a, "h": h, "P": P,
+                "T_air": T_air, "dt": dt, "L": L}
 
     def on_start(self) -> None:
         params = self._read_parameters()
@@ -94,7 +102,7 @@ class ControlPanelFourierVis(QWidget):
         solver = SolverFourierTherm(
             N=params["N"], T0=params["T0"], a=params["a"],
             h=params["h"], P=params["P"], T_air=params["T_air"],
-            dt=params["dt"]
+            dt=params["dt"], L=params["L"], rho_cp=self.rho_cp,
         )
         self.visualizer = FourierHeatVisualizer(solver, self.viewer)
         self.visualizer.start(interval_ms=10)

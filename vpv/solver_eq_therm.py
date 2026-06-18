@@ -10,15 +10,20 @@ class SolverFourierTherm:
         - Остальные грани: адиабатические + объёмный теплообмен с воздухом
     Начальное условие: T(x,y,z,0) = T0
     """
+
     def __init__(self, N: int, T0: float, a: float, h: float,
-                 P: float, T_air: float, dt: float):
+                 P: float, T_air: float, dt: float,
+                 L: float, rho_cp: float):
+
+        self.L = L
+
+        self.delta = L / (N - 1)  # ФИЗИЧЕСКИЙ шаг сетки
         self.a = a          # Температуропроводность
         self.h = h          # Коэф. теплообмена с воздухом (1/с)
         self.P = P          # Мощность паяльника (Вт)
         self.T_air = T_air  # Температура воздуха
         self.dt = dt
         self.N = N
-        self.delta = 1.0 / (N - 1)
 
         # Поле температур
         self.arr_T = np.full((N, N, N), T0, dtype=np.float64)
@@ -42,6 +47,12 @@ class SolverFourierTherm:
         self.funcs_rk4 = [self.dT_dt, self.dt_dt]
         self.step = 0
 
+        vol_src = 27 * (self.delta ** 3)  # физический объём
+        self.S[0, iy - 1:iy + 2, iz - 1:iz + 2] = self.P / (vol_src * rho_cp)
+
+        self.rho_cp = rho_cp
+        self.a_dimless = a / (L ** 2)
+
     def laplacian_vectorized(self, T: np.ndarray) -> np.ndarray:
         h2 = self.delta ** 2
         d2x = np.zeros_like(T)
@@ -64,7 +75,7 @@ class SolverFourierTherm:
 
     def dT_dt(self, T: np.ndarray, t: float) -> np.ndarray:
         lap = self.laplacian_vectorized(T)
-        return self.a * lap + self.S - self.h * (T - self.T_air)
+        return self.a_dimless * lap + self.S - self.h * (T - self.T_air)
 
     def dt_dt(self, T: np.ndarray, t: float) -> float:
         return 1.0

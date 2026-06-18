@@ -32,7 +32,7 @@ class FourierHeatVisualizer:
         t = self.solver.state[1]
 
         self.layer.data = T
-        self.layer.contrast_limits = [float(T.min()), float(T.max())]
+        # self.layer.contrast_limits = [float(T.min()), 100]
         self.viewer.title = f"Time: {t*1000:.3f} ms | Max T: {T.max():.2f} "
         self.step += 1
 
