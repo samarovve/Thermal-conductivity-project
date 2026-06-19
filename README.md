@@ -39,3 +39,24 @@
 #### Самаров Владимир (Часть 2)
 1. **Анимация распространения тепла**.
 2. **Сборка двух моделей в один интерфейс**
+
+## Запуск через командную строку:
+### linux
+sudo apt update
+sudo apt install -y git python3 python3-pip python3-venv libgl1 libegl1
+libxkbcommon-x11-0 libxcb-cursor0 libxcb-xinerama0
+git clone https://github.com/samarovve/Thermal-conductivity-project.git
+cd Thermal-conductivity-project
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install –upgrade pip setuptools wheel
+python -m pip install -r requirements.txt
+python main.py
+### windows
+git clone https://github.com/samarovve/Thermal-conductivity-project.git
+cd Thermal-conductivity-project
+py -3 -m venv .venv
+. ˙venv.ps1
+python -m pip install –upgrade pip setuptools wheel
+python -m pip install -r requirements.txt
+python main.py
